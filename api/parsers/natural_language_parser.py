@@ -1,5 +1,4 @@
 import re
-from ..filters.profile_filters import ProfileFilter
 
 class NaturalLanguageParser:
     """
