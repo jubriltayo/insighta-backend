@@ -1,5 +1,6 @@
 import requests
 
+
 class GenderizeClient:
     BASE_URL = "https://api.genderize.io"
     TIMEOUT = 10
@@ -10,18 +11,18 @@ class GenderizeClient:
             response = requests.get(
                 GenderizeClient.BASE_URL,
                 params={"name": name},
-                timeout=GenderizeClient.TIMEOUT
+                timeout=GenderizeClient.TIMEOUT,
             )
             response.raise_for_status()
             data = response.json()
 
             # Edge case: invalid response
-            if data.get('gender') is None or data.get('count', 0) == 0:
+            if data.get("gender") is None or data.get("count", 0) == 0:
                 return None
-            
+
             return {
-                'gender': data.get('gender'),
-                'probability': data.get('probability'),
+                "gender": data.get("gender"),
+                "probability": data.get("probability"),
             }
         except requests.RequestException:
             return None

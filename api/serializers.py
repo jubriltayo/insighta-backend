@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Profile
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     gender_probability = serializers.SerializerMethodField()
     country_probability = serializers.SerializerMethodField()
@@ -9,9 +10,16 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'id', 'name', 'gender', 'gender_probability',
-            'age', 'age_group', 'country_id', 'country_name',
-            'country_probability', 'created_at'
+            "id",
+            "name",
+            "gender",
+            "gender_probability",
+            "age",
+            "age_group",
+            "country_id",
+            "country_name",
+            "country_probability",
+            "created_at",
         ]
 
     def get_gender_probability(self, obj):
@@ -21,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return round(obj.country_probability, 2)
 
     def get_created_at(self, obj):
-        return obj.created_at.replace(microsecond=0).isoformat().replace('+00:00', 'Z')
+        return obj.created_at.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 class CreateProfileSerializer(serializers.Serializer):

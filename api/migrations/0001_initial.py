@@ -5,30 +5,41 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.UUIDField(default=api.models.generate_uuid7, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('gender', models.CharField(db_index=True, max_length=10)),
-                ('gender_probability', models.FloatField(db_index=True)),
-                ('age', models.IntegerField(db_index=True)),
-                ('age_group', models.CharField(db_index=True, max_length=20)),
-                ('country_id', models.CharField(db_index=True, max_length=2)),
-                ('country_name', models.CharField(max_length=100)),
-                ('country_probability', models.FloatField(db_index=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=api.models.generate_uuid7,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("gender", models.CharField(db_index=True, max_length=10)),
+                ("gender_probability", models.FloatField(db_index=True)),
+                ("age", models.IntegerField(db_index=True)),
+                ("age_group", models.CharField(db_index=True, max_length=20)),
+                ("country_id", models.CharField(db_index=True, max_length=2)),
+                ("country_name", models.CharField(max_length=100)),
+                ("country_probability", models.FloatField(db_index=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
             ],
             options={
-                'ordering': ['-created_at'],
-                'indexes': [models.Index(fields=['gender', 'age_group', 'country_id'], name='api_profile_gender_46d5cc_idx')],
+                "ordering": ["-created_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["gender", "age_group", "country_id"],
+                        name="api_profile_gender_46d5cc_idx",
+                    )
+                ],
             },
         ),
     ]

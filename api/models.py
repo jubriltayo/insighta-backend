@@ -1,8 +1,10 @@
 from uuid_extensions import uuid7
 from django.db import models
 
+
 def generate_uuid7():
     return uuid7()
+
 
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=generate_uuid7, editable=False)
@@ -17,11 +19,10 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['gender', 'age_group', 'country_id']),
+            models.Index(fields=["gender", "age_group", "country_id"]),
         ]
 
     def __str__(self):
-        return f'{self.name} - {self.gender} - {self.age_group} - {self.country_id}'
-    
+        return f"{self.name} - {self.gender} - {self.age_group} - {self.country_id}"
