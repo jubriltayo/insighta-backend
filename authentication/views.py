@@ -73,6 +73,49 @@ def _fetch_github_user(code, code_verifier=None, redirect_uri=None):
     return user_response.json()
 
 
+def _fetch_github_user_cli(code, code_verifier=None, redirect_uri=None):
+    """
+    Same as _fetch_github_user but uses CLI OAuth App credentials.
+    """
+    payload = {
+        "client_id": settings.CLI_GITHUB_CLIENT_ID,
+        "client_secret": settings.CLI_GITHUB_CLIENT_SECRET,
+        "code": code,
+    }
+    if redirect_uri:
+        payload["redirect_uri"] = redirect_uri
+    if code_verifier:
+        payload["code_verifier"] = code_verifier
+
+    token_response = http_requests.post(
+        GITHUB_TOKEN_URL,
+        headers={"Accept": "application/json"},
+        data=payload,
+        timeout=10,
+    )
+
+    if token_response.status_code != 200:
+        return None
+
+    github_access_token = token_response.json().get("access_token")
+    if not github_access_token:
+        return None
+
+    user_response = http_requests.get(
+        GITHUB_USER_URL,
+        headers={
+            "Authorization": f"Bearer {github_access_token}",
+            "Accept": "application/json",
+        },
+        timeout=10,
+    )
+
+    if user_response.status_code != 200:
+        return None
+
+    return user_response.json()
+
+
 def _upsert_user(gh_user):
     """
     Create or update a user from Github user data
@@ -208,9 +251,9 @@ class CLITokenExchangeView(APIView):
 
         code = body.get("code")
         code_verifier = body.get("code_verifier")
-        _state = body.get(
-            "state"
-        )  # optional, can be used by CLI to prevent CSRF in its own flow
+        # _state = body.get(
+        #     "state"
+        # )  # optional, can be used by CLI to prevent CSRF in its own flow
         redirect_uri = body.get(
             "redirect_uri"
         )  # optional, only needed if CLI used a custom one
@@ -221,7 +264,7 @@ class CLITokenExchangeView(APIView):
         if not code_verifier:
             return _error("Missing code_verifier")
 
-        gh_user = _fetch_github_user(
+        gh_user = _fetch_github_user_cli(
             code, code_verifier=code_verifier, redirect_uri=redirect_uri
         )
         if not gh_user:

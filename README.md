@@ -65,13 +65,18 @@ PGPASSWORD=your_db_password
 PGHOST=localhost (or your host)
 PGPORT=5432
 
-# GitHub OAuth
+# GitHub OAuth for web portal
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 GITHUB_CALLBACK_URL=http://localhost:8000/auth/github/callback  # For web portal
 # For production, use your live backend URL
 
 WEB_PORTAL_URL=http://localhost:3000  # URL of your web portal
+
+# GitHub OAuth for CLI
+CLI_GITHUB_CLIENT_ID=your_github_client_id
+CLI_GITHUB_CLIENT_SECRET=your_github_client_secret
+CLI_GITHUB_CALLBACK_URL=http://127.0.0.1:7123/callback # For CLI
 ```
 
 ### Setup Steps

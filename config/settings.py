@@ -155,4 +155,10 @@ GITHUB_CALLBACK_URL = os.getenv(
 )
 WEB_PORTAL_URL = os.getenv("WEB_PORTAL_URL", "http://localhost:3000")
 
+CLI_GITHUB_CLIENT_ID = os.getenv("CLI_GITHUB_CLIENT_ID", "")
+CLI_GITHUB_CLIENT_SECRET = os.getenv("CLI_GITHUB_CLIENT_SECRET", "")
+CLI_GITHUB_CALLBACK_URL = os.getenv(
+    "CLI_GITHUB_CALLBACK_URL", "http://127.0.0.1:7123/callback"
+)
+
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
