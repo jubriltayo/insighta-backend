@@ -148,10 +148,6 @@ class GithubOAuthInitView(APIView):
             .decode()
         )
 
-        # Store in session
-        request.session["oauth_state"] = state
-        request.session["code_verifier"] = code_verifier
-
         params = {
             "client_id": settings.GITHUB_CLIENT_ID,
             "scope": "read:user user:email",
@@ -161,7 +157,28 @@ class GithubOAuthInitView(APIView):
             "code_challenge_method": "S256",
         }
 
-        return _redirect_response(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
+        response = _redirect_response(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
+
+        response.set_cookie(
+            "oauth_state",
+            state,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            max_age=300,
+        )
+
+        response.set_cookie(
+            "code_verifier",
+            code_verifier,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            max_age=300,
+        )
+
+        return response
+
 
 
 class GithubCallbackView(APIView):
@@ -183,11 +200,11 @@ class GithubCallbackView(APIView):
             return _error("Missing authorization code")
 
         # vailidate state
-        session_state = request.session.get("oauth_state")
-        if not state or state != session_state:
+        cookie_state = request.COOKIES.get("oauth_state")
+        if not state or state != cookie_state:
             return _error("Invalid state")
 
-        code_verifier = request.session.get("code_verifier")
+        code_verifier = request.COOKIES.get("code_verifier")
 
         gh_user = _fetch_github_user(
             code, code_verifier=code_verifier, redirect_uri=settings.GITHUB_CALLBACK_URL
@@ -206,29 +223,28 @@ class GithubCallbackView(APIView):
         access_token = issue_access_token(user)
         refresh_record = issue_refresh_token_record(user)
 
-        # clean up session
-        request.session.pop("oauth_state", None)
-        request.session.pop("code_verifier", None)
-
         response = _redirect_response(f"{settings.WEB_PORTAL_URL}/dashboard")
 
         response.set_cookie(
             "access_token",
             access_token,
             httponly=True,
-            secure=not settings.DEBUG,
-            samesite="Lax",
+            secure=True,
+            samesite="None",
             max_age=180,
         )
         response.set_cookie(
             "refresh_token",
             refresh_record.token,
             httponly=True,
-            secure=not settings.DEBUG,
-            samesite="Lax",
+            secure=True,
+            samesite="None",
             max_age=300,
             path="/auth/refresh",
         )
+
+        response.delete_cookie("oauth_state")
+        response.delete_cookie("code_verifier")
 
         return response
 
@@ -343,16 +359,16 @@ class TokenRefreshView(APIView):
                 "access_token",
                 new_access_token,
                 httponly=True,
-                secure=not settings.DEBUG,
-                samesite="Lax",
+                secure=True,
+                samesite="None",
                 max_age=180,
             )
             response.set_cookie(
                 "refresh_token",
                 new_refresh_record.token,
                 httponly=True,
-                secure=not settings.DEBUG,
-                samesite="Lax",
+                secure=True,
+                samesite="None",
                 max_age=300,
                 path="/auth/refresh",
             )
@@ -411,6 +427,7 @@ class WhoAmIView(APIView):
                     "email": user.email,
                     "avatar_url": user.avatar_url,
                     "role": user.role,
+                    "is_active": user.is_active,
                     "last_login_at": (
                         user.last_login_at.isoformat().replace("+00:00", "Z")
                         if user.last_login_at
