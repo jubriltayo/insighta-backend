@@ -168,11 +168,13 @@ SESSION_COOKIE_SAMESITE = "None"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://insighta-web-production-ec66.up.railway.app",
     "https://insighta-web-psi-taupe.vercel.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "https://insighta-web-production-ec66.up.railway.app",
     "https://insighta-web-psi-taupe.vercel.app",
 ]
 
