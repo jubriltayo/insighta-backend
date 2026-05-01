@@ -167,8 +167,6 @@ class GithubOAuthInitView(APIView):
 
         response = _redirect_response(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
 
-        domain = _cookie_domain()
-
         response.set_cookie(
             "oauth_state",
             state,
@@ -176,7 +174,6 @@ class GithubOAuthInitView(APIView):
             secure=True,
             samesite="None",
             max_age=300,
-            domain=domain,
         )
 
         response.set_cookie(
@@ -186,7 +183,6 @@ class GithubOAuthInitView(APIView):
             secure=True,
             samesite="None",
             max_age=300,
-            domain=domain,
         )
 
         return response
