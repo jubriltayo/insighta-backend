@@ -29,7 +29,7 @@ def _error(message, status_code=status.HTTP_400_BAD_REQUEST):
 def _cookie_domain():
     env = os.getenv("ENVIRONMENT", "development")
     if env == "production":
-        return "up.railway.app"
+        return ".up.railway.app"
     return None
 
 
