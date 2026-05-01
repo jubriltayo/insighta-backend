@@ -163,15 +163,17 @@ CLI_GITHUB_CALLBACK_URL = os.getenv(
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = not DEBUG  # True in production
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = True  # True in production
+SESSION_COOKIE_SAMESITE = "None"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://insighta-web-psi-taupe.vercel.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "https://insighta-web-psi-taupe.vercel.app",
 ]
 
 from corsheaders.defaults import default_headers
