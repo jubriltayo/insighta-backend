@@ -26,13 +26,6 @@ def _error(message, status_code=status.HTTP_400_BAD_REQUEST):
     return Response({"status": "error", "message": message}, status=status_code)
 
 
-def _cookie_domain():
-    env = os.getenv("ENVIRONMENT", "development")
-    if env == "production":
-        return ".up.railway.app"
-    return None
-
-
 def _redirect_response(location, status=status.HTTP_302_FOUND):
     return Response(status=status, headers={"Location": location})
 
@@ -233,8 +226,6 @@ class GithubCallbackView(APIView):
 
         response = _redirect_response(f"{settings.WEB_PORTAL_URL}/dashboard")
 
-        domain = _cookie_domain()
-
         response.set_cookie(
             "access_token",
             access_token,
@@ -242,7 +233,6 @@ class GithubCallbackView(APIView):
             secure=True,
             samesite="None",
             max_age=180,
-            domain=domain,
         )
         response.set_cookie(
             "refresh_token",
@@ -252,7 +242,6 @@ class GithubCallbackView(APIView):
             samesite="None",
             max_age=300,
             path="/auth/refresh",
-            domain=domain,
         )
 
         response.delete_cookie("oauth_state")
@@ -368,8 +357,6 @@ class TokenRefreshView(APIView):
                 }
             )
 
-            domain = _cookie_domain()
-
             response.set_cookie(
                 "access_token",
                 new_access_token,
@@ -377,7 +364,6 @@ class TokenRefreshView(APIView):
                 secure=True,
                 samesite="None",
                 max_age=180,
-                domain=domain,
             )
             response.set_cookie(
                 "refresh_token",
@@ -387,7 +373,6 @@ class TokenRefreshView(APIView):
                 samesite="None",
                 max_age=300,
                 path="/auth/refresh",
-                domain=domain,
             )
             return response
 
@@ -419,9 +404,8 @@ class LogoutView(APIView):
             RefreshToken.objects.filter(token=raw_token).update(is_revoked=True)
 
         response = Response({"status": "success", "message": "Logged out"})
-        domain = _cookie_domain()
-        response.delete_cookie("access_token", domain=domain)
-        response.delete_cookie("refresh_token", path="/auth/refresh", domain=domain)
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token", path="/auth/refresh")
         return response
 
 
