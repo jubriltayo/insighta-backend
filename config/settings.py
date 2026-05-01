@@ -166,6 +166,11 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True  # True in production
 SESSION_COOKIE_SAMESITE = "None"
 
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+SESSION_COOKIE_DOMAIN = ".up.railway.app" if ENVIRONMENT == "production" else None
+CSRF_COOKIE_DOMAIN = ".up.railway.app" if ENVIRONMENT == "production" else None
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://insighta-web-production-ec66.up.railway.app",
