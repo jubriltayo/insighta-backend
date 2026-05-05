@@ -10,18 +10,20 @@ class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=generate_uuid7, editable=False)
     name = models.CharField(max_length=100, unique=True)
     gender = models.CharField(max_length=10, db_index=True)
-    gender_probability = models.FloatField(db_index=True)
+    gender_probability = models.FloatField()
     age = models.IntegerField(db_index=True)
     age_group = models.CharField(max_length=20, db_index=True)
     country_id = models.CharField(max_length=2, db_index=True)
     country_name = models.CharField(max_length=100)
-    country_probability = models.FloatField(db_index=True)
+    country_probability = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["gender", "age_group", "country_id"]),
+            models.Index(fields=["gender", "country_id", "age"]),
+            models.Index(fields=["age_group", "country_id", "age"]),
         ]
 
     def __str__(self):
