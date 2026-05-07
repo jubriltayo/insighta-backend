@@ -2,6 +2,7 @@ import csv
 import io
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from datetime import datetime, timezone
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
@@ -327,6 +328,7 @@ class ProfileExportView(AuthenticatedView):
         return response
 
 
+# class ProfileImportView(APIView):
 class ProfileImportView(AuthenticatedAPIView):
     """
     POST /api/profiles/import
@@ -335,6 +337,8 @@ class ProfileImportView(AuthenticatedAPIView):
     A single bad row never fails the upload.
     Rows already inserted before a mid-process error remain committed.
     """
+
+    parser_classes = [MultiPartParser]
 
     REQUIRED_COLUMNS = {
         "name",
